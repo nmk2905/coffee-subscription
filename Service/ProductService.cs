@@ -15,11 +15,13 @@ namespace Services
     public class ProductService : IProductService
     {
         private readonly ProductRepository _productRepository;
+        private readonly CategoryRepository _categoryRepository;
         private readonly ICloudinaryService _cloudinaryService;
-        public ProductService(ProductRepository productRepository, ICloudinaryService cloudinaryService)
+        public ProductService(ProductRepository productRepository, ICloudinaryService cloudinaryService, CategoryRepository categoryRepository)
         {
             _productRepository = productRepository;
             _cloudinaryService = cloudinaryService;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<ProductResponse> AddProduct(AddProductDTO request)
@@ -52,15 +54,18 @@ namespace Services
             await _productRepository.CreateAsync(product);
             await _productRepository.SaveAsync();
 
+            var productWithCategory = await _productRepository.GetProductById(product.ProductId);
+
             var productDTO = new ProductDTO
             {
-                ProductId = product.ProductId,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                Category = product.Category?.Name,
-                ImageUrl = product.ImageUrl,
+                ProductId = productWithCategory.ProductId,
+                Name = productWithCategory.Name,
+                Description = productWithCategory.Description,
+                Price = productWithCategory.Price,
+                Category = productWithCategory.Category?.Name, 
+                ImageUrl = productWithCategory.ImageUrl,
             };
+
 
             return new ProductResponse
             {
@@ -142,5 +147,69 @@ namespace Services
                 ImageUrl = result.ImageUrl
             };
         }
+
+        public async Task<ProductResponse> UpdateProduct(UpdateProductDTO request)
+        {
+            var product = await _productRepository.GetProductById(request.ProductId);
+
+            if (product == null)
+            {
+                throw new Exception("Product not found.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Name))
+                product.Name = request.Name;
+
+            if (!string.IsNullOrWhiteSpace(request.Description))
+                product.Description = request.Description;
+
+            if (request.Price.HasValue && request.Price.Value > 0)
+                product.Price = request.Price.Value;
+
+            if (request.CategoryId > 0) 
+                product.CategoryId = request.CategoryId;
+
+            if (request.Image != null && request.Image.Length > 0)
+            {
+                if (!string.IsNullOrEmpty(product.ImageId))
+                {
+                    await _cloudinaryService.DeleteFileAsync(product.ImageId);
+                }
+
+                string fileExtension = Path.GetExtension(request.Image.FileName);
+                string newFileName = $"{Guid.NewGuid()}{fileExtension}";
+
+                CloudinaryResponse cloudinaryResult = await _cloudinaryService.UploadImage(newFileName, request.Image);
+
+                if (cloudinaryResult == null)
+                {
+                    throw new Exception("Error uploading new image. Please try again.");
+                }
+
+                product.ImageId = cloudinaryResult.PublicImageId;
+                product.ImageUrl = cloudinaryResult.ImageUrl;
+            }
+
+            await _productRepository.UpdateAsync(product);
+            await _productRepository.SaveAsync();
+
+            var productDTO = new ProductDTO
+            {
+                ProductId = product.ProductId,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                Category = product.Category?.Name,
+                ImageUrl = product.ImageUrl,
+            };
+
+            return new ProductResponse
+            {
+                Message = "Product updated successfully",
+                Data = productDTO
+            };
+        }
+
+
     }
 }

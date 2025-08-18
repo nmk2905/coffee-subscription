@@ -17,5 +17,6 @@ namespace Services.Interface
         Task<List<ProductDTO>> GetAllProductFreezeAsync();
         Task<List<ProductDTO>> GetAllProductTeaAsync();
         Task<ProductResponse> AddProduct(AddProductDTO request);
+        Task<ProductResponse> UpdateProduct(UpdateProductDTO request);
     }
 }

@@ -31,7 +31,7 @@ namespace Services
 
         public async Task<CategoryDTO> GetCategoryByIdAsync(int id)
         {
-            var result = await _categoryRepository.GetBaristaById(id);
+            var result = await _categoryRepository.GetCategoryById(id);
             return new CategoryDTO
             {
                 CategoryId = result.CategoryId,

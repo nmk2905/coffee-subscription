@@ -17,7 +17,7 @@ namespace Repositories
         {
             return _context.Categories.ToList();
         }
-        public async Task<Category> GetBaristaById(int id)
+        public async Task<Category> GetCategoryById(int id)
         {
             return await _context.Categories.FirstOrDefaultAsync(i => i.CategoryId == id);
         }
