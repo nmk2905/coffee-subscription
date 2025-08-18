@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Repo;
+using Repositories;
 using Service;
 using Service.Interface;
+using Services;
+using Services.Interface;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -18,13 +20,13 @@ builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Emai
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordHash, PasswordHash>();
-//builder.Services.AddScoped<ICustomerService, ICustomerService>();
+builder.Services.AddScoped<IStaffService, StaffService>();
 //builder.Services.AddScoped<ICustomerService, ICustomerService>();
 //builder.Services.AddScoped<ICustomerService, ICustomerService>();
 
 
 builder.Services.AddScoped<CustomerRepository>();
-//builder.Services.AddScoped<AssessmentRepository>();
+builder.Services.AddScoped<StaffRepository>();
 //builder.Services.AddScoped<CourseRepository>();
 //builder.Services.AddScoped<CourseCategoryRepository>();
 

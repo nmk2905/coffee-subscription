@@ -6,7 +6,7 @@ using Repo.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Repo.DBContext;
+namespace Repositories.DBContext;
 
 public partial class coffee_subscription_systemContext : DbContext
 {

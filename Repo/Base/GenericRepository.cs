@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Repo.DBContext;
+using Repositories.DBContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repo.Base
+namespace Repositories.Base
 {
     public class GenericRepository<T> where T : class
     {

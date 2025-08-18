@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Repo.Models;
-using Service;
 using Service.Interface;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -29,9 +28,31 @@ namespace API.Controllers
             _passwordHash = passwordHash;
         }
 
+        //jwt
+        private string GenerateJSONWebToken(Customer customerInfo)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                _config["Jwt:Issuer"],
+                _config["Jwt:Audience"],
+                new Claim[]
+                {
+            new(ClaimTypes.NameIdentifier, customerInfo.CustomerId.ToString()),
+            new(ClaimTypes.Email, customerInfo.Email),
+            new Claim(ClaimTypes.Role, "customer")
+                },
+                expires: DateTime.Now.AddMinutes(120),
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
         //GET
 
-        [HttpGet("GetCustomerById/{id}")]
+        [HttpGet("get-customer-by-id/{id}")]
         public async Task<IActionResult> GetCustomerById(int id)
         {
             var result = await _customerService.GetCustomerById(id);
@@ -137,25 +158,6 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        private string GenerateJSONWebToken(Customer customerInfo)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                _config["Jwt:Issuer"],
-                _config["Jwt:Audience"],
-                new Claim[]
-                {
-            new(ClaimTypes.NameIdentifier, customerInfo.CustomerId.ToString()),
-            new(ClaimTypes.Email, customerInfo.Email),
-            new Claim(ClaimTypes.Role, "customer")
-                },
-                expires: DateTime.Now.AddMinutes(120),
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+        
     }
 }

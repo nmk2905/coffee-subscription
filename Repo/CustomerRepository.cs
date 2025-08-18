@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Repo.Base;
 using Repo.Models;
+using Repositories.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repo
+namespace Repositories
 {
     public class CustomerRepository : GenericRepository<Customer>
     {
