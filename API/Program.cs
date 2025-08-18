@@ -21,14 +21,18 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordHash, PasswordHash>();
 builder.Services.AddScoped<IStaffService, StaffService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+//builder.Services.AddScoped<ICustomerService, ICustomerService>();
 //builder.Services.AddScoped<ICustomerService, ICustomerService>();
 //builder.Services.AddScoped<ICustomerService, ICustomerService>();
 
 
 builder.Services.AddScoped<CustomerRepository>();
 builder.Services.AddScoped<StaffRepository>();
+builder.Services.AddScoped<CategoryRepository>();
 //builder.Services.AddScoped<CourseRepository>();
-//builder.Services.AddScoped<CourseCategoryRepository>();
+//builder.Services.AddScoped<CourseRepository>();
+//builder.Services.AddScoped<CourseRepository>();
 
 
 builder.Services.AddControllers().AddJsonOptions(options =>
