@@ -6,7 +6,7 @@ using Repo.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Repositories.DBContext;
+namespace Repo.DBContext;
 
 public partial class coffee_subscription_systemContext : DbContext
 {
@@ -174,6 +174,12 @@ public partial class coffee_subscription_systemContext : DbContext
             entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
             entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.ImageId)
+                .HasMaxLength(255)
+                .HasColumnName("image_id");
+            entity.Property(e => e.ImageUrl)
+                .IsRequired()
+                .HasColumnName("image_url");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(100)

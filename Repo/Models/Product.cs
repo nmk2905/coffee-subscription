@@ -17,6 +17,10 @@ public partial class Product
 
     public decimal Price { get; set; }
 
+    public string ImageUrl { get; set; }
+
+    public string ImageId { get; set; }
+
     public virtual Category Category { get; set; }
 
     public virtual ICollection<Redemption> Redemptions { get; set; } = new List<Redemption>();

@@ -16,12 +16,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordHash, PasswordHash>();
 builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 //builder.Services.AddScoped<ICustomerService, ICustomerService>();
 //builder.Services.AddScoped<ICustomerService, ICustomerService>();
 //builder.Services.AddScoped<ICustomerService, ICustomerService>();
@@ -30,6 +33,8 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<CustomerRepository>();
 builder.Services.AddScoped<StaffRepository>();
 builder.Services.AddScoped<CategoryRepository>();
+builder.Services.AddScoped<ProductRepository>();
+//builder.Services.AddScoped<CourseRepository>();
 //builder.Services.AddScoped<CourseRepository>();
 //builder.Services.AddScoped<CourseRepository>();
 //builder.Services.AddScoped<CourseRepository>();
