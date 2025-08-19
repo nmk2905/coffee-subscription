@@ -74,6 +74,16 @@ namespace Services
             };
         }
 
+        public async Task<bool> DeleteProduct(int id)
+        {
+            var product = await _productRepository.GetProductById(id);
+            if (product != null)
+            {
+                return await _productRepository.RemoveAsync(product);
+            }
+            return false;
+        }
+
         //public async Task<List<ProductDTO>> GetAllProductAsync()
         //{
         //    var result = await _productRepository.GetAllProductAsync();

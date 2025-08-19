@@ -32,19 +32,23 @@ namespace APIs.Controllers
             {
         new Claim(ClaimTypes.NameIdentifier, userInfo.StaffId.ToString()),
         new Claim(ClaimTypes.Email, userInfo.Email ?? string.Empty),
-        new Claim(ClaimTypes.Role, userInfo.Role ?? "Staff") 
+        new Claim(ClaimTypes.Role, userInfo.Role ?? "Staff")
     };
 
+            var issuer = _config.GetSection("Jwt:ValidIssuers").Get<string[]>()[0];
+            var audience = _config.GetSection("Jwt:ValidAudiences").Get<string[]>()[0];
+
             var token = new JwtSecurityToken(
-                _config["Jwt:Issuer"],
-                _config["Jwt:Audience"],
-                claims,
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
                 expires: DateTime.Now.AddMinutes(120),
                 signingCredentials: credentials
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
 
         //GET
 

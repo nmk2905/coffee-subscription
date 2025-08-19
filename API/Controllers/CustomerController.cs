@@ -34,10 +34,13 @@ namespace API.Controllers
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+            var issuer = _config.GetSection("Jwt:ValidIssuers").Get<string[]>()[0];
+            var audience = _config.GetSection("Jwt:ValidAudiences").Get<string[]>()[0];
+
             var token = new JwtSecurityToken(
-                _config["Jwt:Issuer"],
-                _config["Jwt:Audience"],
-                new Claim[]
+                issuer: issuer,
+                audience: audience,
+                claims: new Claim[]
                 {
             new(ClaimTypes.NameIdentifier, customerInfo.CustomerId.ToString()),
             new(ClaimTypes.Email, customerInfo.Email),
@@ -49,6 +52,7 @@ namespace API.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
 
         //GET
 

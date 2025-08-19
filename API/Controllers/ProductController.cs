@@ -18,6 +18,16 @@ namespace APIs.Controllers
         }
 
         //GET
+        [HttpGet("get-product-by-id/{id}")]
+        public async Task<IActionResult> GetProductById(int id)
+        {
+            var result = await _productService.GetProductById(id);
+            if (result == null)
+            {
+                return NotFound(new { message = "No products found!" });
+            }
+            return Ok(result);
+        }
 
         [HttpGet("get-coffee-product")]
         public async Task<IActionResult> GetAllProductCoffeeAsync()
@@ -77,6 +87,19 @@ namespace APIs.Controllers
             var result = await _productService.UpdateProduct(dto);
 
             return Ok(result);
+        }
+
+        //DELETE
+
+        [HttpDelete("delete-product/{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var result = await _productService.DeleteProduct(id);
+            if (!result)
+            {
+                return NotFound(new { message = "Product not found!" });
+            }
+            return Ok(new { message = "Product deleted successfully!" });
         }
     }
 }
