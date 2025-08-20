@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -53,6 +54,7 @@ namespace APIs.Controllers
         //GET
 
         [HttpGet("get-all-barista")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllBaristaAsync()
         {
             var result = await _staffService.GetAllBaristaAsync();
@@ -60,6 +62,7 @@ namespace APIs.Controllers
         }
 
         [HttpGet("get-barista-by-id/{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetStaffById(int id)
         {
             var result = await _staffService.GetStaffByIdAsync(id);

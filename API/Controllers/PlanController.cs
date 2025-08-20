@@ -1,5 +1,6 @@
 ﻿using Contracts.DTOs;
 using Contracts.DTOs.SubscriptionPlan;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,7 @@ namespace APIs.Controllers
         // POST
 
         [HttpPost("add-plan")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> AddPlan([FromBody] AddPlanRequest request)
         {
             var dto = new AddPlanDTO
@@ -62,6 +64,7 @@ namespace APIs.Controllers
         // PUT
 
         [HttpPut("update-plan")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdatePlan(int id, [FromBody] UpdatePlanRequest request)
         {
             var dto = new UpdatePlanDTO
@@ -82,6 +85,7 @@ namespace APIs.Controllers
         }
 
         [HttpPut("unactive/{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UnActivePlan(int id)
         {
             var result = await _planService.UnActivePlan(id);

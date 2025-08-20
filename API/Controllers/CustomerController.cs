@@ -1,5 +1,6 @@
 ﻿using Contracts.Abstracts.Account;
 using Contracts.DTOs.Customer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -57,6 +58,7 @@ namespace API.Controllers
         //GET
 
         [HttpGet("get-all-customers")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllCustomers()
         {
             var result = await _customerService.GetAllCustomerAsync();
@@ -64,6 +66,7 @@ namespace API.Controllers
         }
 
         [HttpGet("get-customer-by-id/{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetCustomerById(int id)
         {
             var result = await _customerService.GetCustomerById(id);
@@ -71,6 +74,7 @@ namespace API.Controllers
         }
 
         [HttpGet("my-profile")]
+        [Authorize(Roles = "customer")]
         public async Task<IActionResult> GetMyProfile()
         {
             var customer = await _customerService.GetMyProfile(User);
@@ -146,6 +150,7 @@ namespace API.Controllers
         }
 
         [HttpPost("update-profile")]
+        [Authorize(Roles = "customer")]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
         {
             var customerIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;

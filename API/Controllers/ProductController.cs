@@ -1,5 +1,6 @@
 ﻿using Contracts.DTOs;
 using Contracts.DTOs.Product;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -61,6 +62,7 @@ namespace APIs.Controllers
         //POST
 
         [HttpPost("add-product")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> AddProduct([FromForm] AddProductRequest request)
         {
             var dto = new AddProductDTO
@@ -80,6 +82,7 @@ namespace APIs.Controllers
         //PUT
 
         [HttpPut("update-product")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateProduct([FromForm] UpdateProductRequest request)
         {
             var dto = new UpdateProductDTO
@@ -100,6 +103,7 @@ namespace APIs.Controllers
         //DELETE
 
         [HttpDelete("delete-product/{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var result = await _productService.DeleteProduct(id);
