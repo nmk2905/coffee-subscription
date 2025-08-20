@@ -11,7 +11,7 @@ namespace Services.Interface
 {
     public interface IProductService
     {
-        //Task<List<ProductDTO>> GetAllProductAsync();
+        Task<List<ProductDTO>> GetAllProductAsync();
         Task<ProductDTO> GetProductById(int id);
         Task<List<ProductDTO>> GetAllProductCoffeeAsync();
         Task<List<ProductDTO>> GetAllProductFreezeAsync();

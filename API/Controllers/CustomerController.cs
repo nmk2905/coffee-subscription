@@ -56,6 +56,13 @@ namespace API.Controllers
 
         //GET
 
+        [HttpGet("get-all-customers")]
+        public async Task<IActionResult> GetAllCustomers()
+        {
+            var result = await _customerService.GetAllCustomerAsync();
+            return Ok(result);
+        }
+
         [HttpGet("get-customer-by-id/{id}")]
         public async Task<IActionResult> GetCustomerById(int id)
         {

@@ -84,19 +84,20 @@ namespace Services
             return false;
         }
 
-        //public async Task<List<ProductDTO>> GetAllProductAsync()
-        //{
-        //    var result = await _productRepository.GetAllProductAsync();
+        public async Task<List<ProductDTO>> GetAllProductAsync()
+        {
+            var result = await _productRepository.GetAllProductAsync();
 
-        //    return result?.Select(p => new ProductDTO
-        //    {
-        //        ProductId = p.ProductId,
-        //        Category = p.Category?.Name,
-        //        Name = p.Name,
-        //        Description = p.Description,
-        //        Price = p.Price             
-        //    }).ToList() ?? new List<ProductDTO>();
-        //}
+            return result?.Select(p => new ProductDTO
+            {
+                ProductId = p.ProductId,
+                Category = p.Category?.Name,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                ImageUrl = p.ImageUrl
+            }).ToList() ?? new List<ProductDTO>();
+        }
 
         public async Task<List<ProductDTO>> GetAllProductCoffeeAsync()
         {

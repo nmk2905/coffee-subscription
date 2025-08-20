@@ -25,5 +25,9 @@ public partial class SubscriptionPlan
 
     public DateTime? CreatedAt { get; set; }
 
+    public int? ProductId { get; set; }
+
+    public virtual Product Product { get; set; }
+
     public virtual ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
 }

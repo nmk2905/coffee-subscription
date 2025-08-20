@@ -25,5 +25,7 @@ public partial class Product
 
     public virtual ICollection<Redemption> Redemptions { get; set; } = new List<Redemption>();
 
+    public virtual ICollection<SubscriptionPlan> SubscriptionPlans { get; set; } = new List<SubscriptionPlan>();
+
     public virtual ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
 }

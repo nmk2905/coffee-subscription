@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Repo.DBContext;
+using Repo.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

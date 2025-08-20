@@ -18,6 +18,14 @@ namespace APIs.Controllers
         }
 
         //GET
+
+        [HttpGet("get-all-products")]
+        public async Task<IActionResult> GetAllProducts()
+        {
+            var result = await _productService.GetAllProductAsync();
+            return Ok(result);
+        }
+
         [HttpGet("get-product-by-id/{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {

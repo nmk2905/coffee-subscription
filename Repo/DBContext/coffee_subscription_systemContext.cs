@@ -2,11 +2,10 @@
 #nullable disable
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Repo.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Repo.DBContext;
+namespace Repo.Models;
 
 public partial class coffee_subscription_systemContext : DbContext
 {
@@ -321,6 +320,8 @@ public partial class coffee_subscription_systemContext : DbContext
 
             entity.ToTable("subscription_plans");
 
+            entity.HasIndex(e => e.ProductId, "IX_subscription_plans_product_id");
+
             entity.Property(e => e.PlanId).HasColumnName("plan_id");
             entity.Property(e => e.Active)
                 .HasDefaultValue(true)
@@ -339,6 +340,9 @@ public partial class coffee_subscription_systemContext : DbContext
             entity.Property(e => e.Price)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("price");
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.SubscriptionPlans).HasForeignKey(d => d.ProductId);
         });
 
         OnModelCreatingPartial(modelBuilder);
