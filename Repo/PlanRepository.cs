@@ -21,5 +21,12 @@ namespace Repositories
                 .Include(p => p.Product)
                 .FirstOrDefaultAsync(i => i.PlanId == id);
         }
+
+        public async Task<SubscriptionPlan?> GetActivePlanByIdAsync(int planId)
+        {
+            return await _context.SubscriptionPlans
+                .Include(p => p.Product)
+                .FirstOrDefaultAsync(p => p.PlanId == planId && p.Active == true);
+        }
     }
 }

@@ -26,6 +26,8 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+//builder.Services.AddScoped<ICustomerService, ICustomerService>();
 //builder.Services.AddScoped<ICustomerService, ICustomerService>();
 //builder.Services.AddScoped<ICustomerService, ICustomerService>();
 
@@ -35,7 +37,7 @@ builder.Services.AddScoped<StaffRepository>();
 builder.Services.AddScoped<CategoryRepository>();
 builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<PlanRepository>();
-//builder.Services.AddScoped<CourseRepository>();
+builder.Services.AddScoped<SubscriptionRepository>();
 //builder.Services.AddScoped<CourseRepository>();
 //builder.Services.AddScoped<CourseRepository>();
 
