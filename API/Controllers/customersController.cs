@@ -16,13 +16,13 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CustomerController : Controller
+    public class customersController : Controller
     {
         private readonly IConfiguration _config;
         private readonly IPasswordHash _passwordHash;
         private readonly ICustomerService _customerService;
 
-        public CustomerController(IConfiguration config, ICustomerService customerService, IPasswordHash passwordHash)
+        public customersController(IConfiguration config, ICustomerService customerService, IPasswordHash passwordHash)
         {
             _config = config;
             _customerService = customerService;
@@ -57,7 +57,11 @@ namespace API.Controllers
 
         //GET
 
-        [HttpGet("get-all-customers")]
+        /// <summary>
+        /// get-all-customers
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllCustomers()
         {
@@ -65,7 +69,12 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-customer-by-id/{id}")]
+        /// <summary>
+        /// get-customer-by-id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetCustomerById(int id)
         {
@@ -149,7 +158,12 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpPost("update-profile")]
+        /// <summary>
+        /// update-profile
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("my-profile")]
         [Authorize(Roles = "customer")]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
         {

@@ -13,6 +13,6 @@ namespace Services.Interface
         Task<PlanDTO> GetPlanByIdAsync(int id);
         Task<PlanReponse> AddPlan(AddPlanDTO request);
         Task<PlanReponse> UpdatePlan(UpdatePlanDTO request);
-        Task<ForgotPasswordReponse> UnActivePlan(int id);
+        Task<ForgotPasswordReponse> DeactivatePlan(int id);
     }
 }

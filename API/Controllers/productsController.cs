@@ -10,24 +10,33 @@ namespace APIs.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController : Controller
+    public class productsController : Controller
     {
         private readonly IProductService _productService;
-        public ProductController(IProductService productService)
+        public productsController(IProductService productService)
         {
             _productService = productService;
         }
 
         //GET
 
-        [HttpGet("get-all-products")]
+        /// <summary>
+        /// get-all-products
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
             var result = await _productService.GetAllProductAsync();
             return Ok(result);
         }
 
-        [HttpGet("get-product-by-id/{id}")]
+        /// <summary>
+        /// get-product-by-id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
             var result = await _productService.GetProductById(id);
@@ -38,21 +47,33 @@ namespace APIs.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-coffee-product")]
+        /// <summary>
+        /// get-coffee-product
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("coffees")]
         public async Task<IActionResult> GetAllProductCoffeeAsync()
         {
             var result = await _productService.GetAllProductCoffeeAsync();
             return Ok(result);
         }
 
-        [HttpGet("get-freeze-product")]
+        /// <summary>
+        /// get-freeze-product
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("freezes")]
         public async Task<IActionResult> GetAllProductFreezeAsync()
         {
             var result = await _productService.GetAllProductFreezeAsync();
             return Ok(result);
         }
 
-        [HttpGet("get-tea-product")]
+        /// <summary>
+        /// get-tea-product
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("teas")]
         public async Task<IActionResult> GetAllProductTeaAsync()
         {
             var result = await _productService.GetAllProductTeaAsync();
@@ -61,7 +82,12 @@ namespace APIs.Controllers
 
         //POST
 
-        [HttpPost("add-product")]
+        /// <summary>
+        /// add-product
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> AddProduct([FromForm] AddProductRequest request)
         {
@@ -81,7 +107,12 @@ namespace APIs.Controllers
 
         //PUT
 
-        [HttpPut("update-product")]
+        /// <summary>
+        /// update-product
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPut]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateProduct([FromForm] UpdateProductRequest request)
         {
@@ -102,7 +133,12 @@ namespace APIs.Controllers
 
         //DELETE
 
-        [HttpDelete("delete-product/{id}")]
+        /// <summary>
+        /// delete-product
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteProduct(int id)
         {

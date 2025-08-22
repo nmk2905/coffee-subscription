@@ -53,7 +53,11 @@ namespace APIs.Controllers
 
         //GET
 
-        [HttpGet("get-all-barista")]
+        /// <summary>
+        /// get-all-barista
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("baristas")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllBaristaAsync()
         {
@@ -61,7 +65,12 @@ namespace APIs.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-barista-by-id/{id}")]
+        /// <summary>
+        /// get-barista-by-id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetStaffById(int id)
         {

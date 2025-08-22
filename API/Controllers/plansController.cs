@@ -10,24 +10,33 @@ namespace APIs.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PlanController : Controller
+    public class plansController : Controller
     {
         private readonly IPlanService _planService;
-        public PlanController(IPlanService planService)
+        public plansController(IPlanService planService)
         {
             _planService = planService;
         }
 
         // GET
 
-        [HttpGet("get-all-plans")]
+        /// <summary>
+        /// get-all-plans
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
         public async Task<IActionResult> GetAllPlansAsync()
         {
             var plans = await _planService.GetAllPlansAsync();
             return Ok(plans);
         }
 
-        [HttpGet("get-plan-by-id/{id}")]
+        /// <summary>
+        /// get-plan-by-id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetPlanByIdAsync(int id)
         {
             var plan = await _planService.GetPlanByIdAsync(id);
@@ -40,7 +49,12 @@ namespace APIs.Controllers
 
         // POST
 
-        [HttpPost("add-plan")]
+        /// <summary>
+        /// add-plan
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> AddPlan([FromBody] AddPlanRequest request)
         {
@@ -63,7 +77,13 @@ namespace APIs.Controllers
 
         // PUT
 
-        [HttpPut("update-plan")]
+        /// <summary>
+        /// update-plan
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPut]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdatePlan(int id, [FromBody] UpdatePlanRequest request)
         {
@@ -84,26 +104,23 @@ namespace APIs.Controllers
             return Ok(result);
         }
 
-        [HttpPut("unactive/{id}")]
+        /// <summary>
+        /// unactive
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPatch("{id}/deactivate")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> UnActivePlan(int id)
+        public async Task<IActionResult> DeactivatePlan(int id)
         {
-            var result = await _planService.UnActivePlan(id);
+            var result = await _planService.DeactivatePlan(id);
 
             if (!result.Success)
             {
-                return NotFound(new
-                {
-                    success = false,
-                    message = result.Message
-                });
+                return NotFound(result);
             }
 
-            return Ok(new
-            {
-                success = true,
-                message = result.Message
-            });
+            return Ok(result);
         }
 
     }

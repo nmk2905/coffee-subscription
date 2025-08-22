@@ -168,7 +168,7 @@ namespace Services
             };
         }
 
-        public async Task<ForgotPasswordReponse> UnActivePlan(int id)
+        public async Task<ForgotPasswordReponse> DeactivatePlan(int id)
         {
             var plan = await _planRepository.GetPlanByIdAsync(id);
 

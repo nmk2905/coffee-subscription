@@ -7,24 +7,34 @@ namespace APIs.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CategoryController : Controller
+    public class categoriesController : Controller
     {
         private readonly ICategoryService _categoryService;
-        public CategoryController(ICategoryService categoryService)
+        public categoriesController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
         }
 
         //GET
 
-        [HttpGet("get-all-category")]
+        /// <summary>
+        /// get-all-category
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
         public async Task<IActionResult> GetAllCategoryAsync()
         {
             var result = await _categoryService.GetAllCategoryAsync();
             return Ok(result);
         }
 
-        [HttpGet("get-category-by-id/{id}")]
+
+        /// <summary>
+        /// get-category-by-id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById(int id)
         {
             var result = await _categoryService.GetCategoryByIdAsync(id);
