@@ -45,7 +45,9 @@ namespace API.Controllers
                 {
             new(ClaimTypes.NameIdentifier, customerInfo.CustomerId.ToString()),
             new(ClaimTypes.Email, customerInfo.Email),
-            new Claim(ClaimTypes.Role, "customer")
+            new Claim(ClaimTypes.Role, "customer"),
+            new Claim(ClaimTypes.Name, customerInfo.Name ?? ""),
+        new Claim(ClaimTypes.MobilePhone, customerInfo.Phone ?? "")
                 },
                 expires: DateTime.Now.AddMinutes(120),
                 signingCredentials: credentials
@@ -56,6 +58,20 @@ namespace API.Controllers
 
 
         //GET
+
+        /// <summary>
+        /// qr code generation for customer - name, phone
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("qr")]
+        [Authorize]
+        public async Task<IActionResult> GenerateQr()
+        {
+            var result = await _customerService.GenerateCustomerQrAsync(User);
+            var qrBytes = result;
+
+            return File(qrBytes, "image/png");
+        }
 
         /// <summary>
         /// get-all-customers

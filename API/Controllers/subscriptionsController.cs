@@ -1,4 +1,6 @@
-﻿using Contracts.DTOs.Subscription;
+﻿using Contracts.DTOs.Payment;
+using Contracts.DTOs.SepayWebhook;
+using Contracts.DTOs.Subscription;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -77,18 +79,21 @@ namespace APIs.Controllers
         [Authorize(Roles = "customer")]
         public async Task<IActionResult> Order([FromBody] OrderRequest request)
         {
-            var customerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                                       ?? throw new Exception("Customer not found!"));
-
-            var dto = new OrderDTO
-            {
-                CustomerId = customerId,
-                PlanId = request.PlanId
-            };
-
+            var customerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new Exception("Customer not found!"));
+            var dto = new OrderDTO { CustomerId = customerId, PlanId = request.PlanId };
             var result = await _subscriptionService.Order(dto);
             return Ok(result);
         }
+
+
+        [HttpPost("payment-callback")]
+        [AllowAnonymous] // Sepay sẽ gọi webhook, không có JWT
+        public async Task<IActionResult> PaymentCallback([FromBody] SepayWebhookRequest request)
+        {
+            await _subscriptionService.HandleSepayWebhookAsync(request);
+            return Ok(new { success = true });
+        }
+
 
         //DELETE
 

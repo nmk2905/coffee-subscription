@@ -1,6 +1,7 @@
 using Contracts.Settings;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repositories;
@@ -17,6 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+builder.Services.Configure<SepayOptions>(builder.Configuration.GetSection("Sepay"));
 
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -27,9 +29,10 @@ builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IRedemptionService, RedemptionService>();
 //builder.Services.AddScoped<ICustomerService, ICustomerService>();
-//builder.Services.AddScoped<ICustomerService, ICustomerService>();
-//builder.Services.AddScoped<ICustomerService, ICustomerService>();
+
 
 
 builder.Services.AddScoped<CustomerRepository>();
@@ -38,6 +41,9 @@ builder.Services.AddScoped<CategoryRepository>();
 builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<PlanRepository>();
 builder.Services.AddScoped<SubscriptionRepository>();
+builder.Services.AddScoped<PaymentRepository>();
+builder.Services.AddScoped<NotiRepository>();
+builder.Services.AddScoped<RedemptionRepository>();
 //builder.Services.AddScoped<CourseRepository>();
 //builder.Services.AddScoped<CourseRepository>();
 
