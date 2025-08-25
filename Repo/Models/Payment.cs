@@ -19,5 +19,7 @@ public partial class Payment
 
     public string Status { get; set; }
 
+    public string TransferContent { get; set; }
+
     public virtual Subscription Subscription { get; set; }
 }

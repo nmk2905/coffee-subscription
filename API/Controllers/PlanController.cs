@@ -1,5 +1,4 @@
-﻿using Contracts.DTOs;
-using Contracts.DTOs.SubscriptionPlan;
+﻿using Contracts.DTOs.SubscriptionPlan;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -9,11 +8,11 @@ using Services.Interface;
 namespace APIs.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class plansController : Controller
+    [Route("api/plans")]
+    public class PlanController : Controller
     {
         private readonly IPlanService _planService;
-        public plansController(IPlanService planService)
+        public PlanController(IPlanService planService)
         {
             _planService = planService;
         }

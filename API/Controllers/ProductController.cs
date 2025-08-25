@@ -9,11 +9,11 @@ using Services.Interface;
 namespace APIs.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class productsController : Controller
+    [Route("api/products")]
+    public class ProductController : Controller
     {
         private readonly IProductService _productService;
-        public productsController(IProductService productService)
+        public ProductController(IProductService productService)
         {
             _productService = productService;
         }

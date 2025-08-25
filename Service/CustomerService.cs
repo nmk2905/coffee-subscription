@@ -1,7 +1,9 @@
 ﻿
 using Contracts.DTOs;
 using Contracts.DTOs.Customer;
+using Contracts.DTOs.QrCode;
 using Microsoft.Identity.Client;
+using QRCoder;
 using Repo;
 using Repo.Models;
 using Repositories;
@@ -254,6 +256,60 @@ namespace Service
             return await GetCustomerById(customerId);
         }
 
+        public async Task<byte[]> GenerateCustomerQrAsync(ClaimsPrincipal user)
+        {
+            var name = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+            var phone = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.MobilePhone)?.Value;
+
+            if (string.IsNullOrEmpty(phone))
+                throw new Exception("Phone number not found in JWT");
+
+            var payload = new { Name = name, Phone = phone };
+            var json = System.Text.Json.JsonSerializer.Serialize(payload);
+
+            using var qrGenerator = new QRCodeGenerator();
+            using var qrCodeData = qrGenerator.CreateQrCode(json, QRCodeGenerator.ECCLevel.Q);
+            using var qrCode = new PngByteQRCode(qrCodeData);
+            return qrCode.GetGraphic(20); // return byte[] (PNG)
+        }
+
+        public async Task<Customer> GetOrCreateGoogleCustomerAsync(string email, string name)
+        {
+            // 1) Tìm sẵn theo email
+            var existing = await _customerRepo.GetCustomerEmail(email);
+            if (existing != null)
+            {
+                // Nếu đang chưa verify thì bật verified để login được
+                if (existing.IsVerified != true)
+                {
+                    existing.IsVerified = true;
+                    existing.VerificationToken = null;
+                    await _customerRepo.UpdateAsync(existing);
+                    await _customerRepo.SaveAsync();
+                }
+                return existing;
+            }
+
+            // 2) Tạo tài khoản mới (password ngẫu nhiên vì schema cần hash)
+            _passwordHash.CreatePasswordHash(Guid.NewGuid().ToString("N"),
+                out byte[] hash, out byte[] salt);
+
+            var newCustomer = new Customer
+            {
+                Name = name ?? "",
+                Email = email,
+                Phone = "",
+                Address = "",
+                PasswordHash = hash,
+                PasswordSalt = salt,
+                IsVerified = true,          // <- rất quan trọng
+                VerificationToken = null
+            };
+
+            await _customerRepo.CreateAsync(newCustomer);
+            await _customerRepo.SaveAsync();
+            return newCustomer;
+        }
 
     }
 }

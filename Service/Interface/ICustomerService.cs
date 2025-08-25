@@ -1,6 +1,7 @@
 ﻿
 using Contracts.DTOs;
 using Contracts.DTOs.Customer;
+using Contracts.DTOs.QrCode;
 using Repo.Models;
 using System;
 using System.Collections.Generic;
@@ -23,5 +24,7 @@ namespace Service.Interface
         Task<ResetPasswordResponse> ResetPassword(ResetPasswordDTO request);
         Task<UpdateProfileResponse> UpdateProfile(UpdateProfileDTO request);
         Task<CustomerDTO> GetMyProfile(ClaimsPrincipal user);
+        Task<byte[]> GenerateCustomerQrAsync(ClaimsPrincipal user);
+        Task<Customer> GetOrCreateGoogleCustomerAsync(string email, string name);
     }
 }

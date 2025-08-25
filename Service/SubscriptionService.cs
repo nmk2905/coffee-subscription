@@ -1,10 +1,14 @@
 ﻿using Contracts.DTOs.Customer;
+using Contracts.DTOs.Payment;
+using Contracts.DTOs.SepayWebhook;
 using Contracts.DTOs.Subscription;
 using Microsoft.EntityFrameworkCore;
+using Repo.Models;
 using Repositories;
 using Services.Interface;
 using System.Numerics;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 
 namespace Services
@@ -13,11 +17,17 @@ namespace Services
     {
         private readonly SubscriptionRepository _subscriptionRepository;
         private readonly PlanRepository _planRepository;
-        public SubscriptionService(SubscriptionRepository subscriptionRepository, PlanRepository planRepository)
+        private readonly PaymentRepository _paymentRepo;
+        public SubscriptionService(SubscriptionRepository subscriptionRepository,
+            PlanRepository planRepository, PaymentRepository paymentRepo)
         {
             _subscriptionRepository = subscriptionRepository;
             _planRepository = planRepository;
+            _paymentRepo = paymentRepo;
         }
+
+
+        //
         public async Task<List<SubscriptionDTO>> GetAllSubscriptionsAsync()
         {
             var result = await _subscriptionRepository.GetAllSubscriptionsAsync();
@@ -64,6 +74,7 @@ namespace Services
             };
         }
 
+        //my-subs
         public async Task<List<SubscriptionDTO>> GetMySubs(ClaimsPrincipal user)
         {
             var customerIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -99,58 +110,105 @@ namespace Services
             }).ToList();
         }
 
-
-        public async Task<SubReponse> Order(OrderDTO request)
+        //
+        public async Task<SubResponse> Order(OrderDTO request)
         {
             var plan = await _planRepository.GetActivePlanByIdAsync(request.PlanId);
+            if (plan == null) throw new Exception("Plan not available!");
 
-            if (plan == null)
-            {
-                throw new Exception("Plan not available!");
-            }
-
-            var subscription = new Repo.Models.Subscription
+            var subscription = new Subscription
             {
                 CustomerId = request.CustomerId,
                 PlanId = plan.PlanId,
                 ProductId = plan.ProductId,
-                StartDate = null,   // chưa active
-                EndDate = null,     // chưa active
-                RemainingDays = 0,  // chưa active
+                Status = "PendingPayment",
                 CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                Status = "PendingPayment"
+                UpdatedAt = DateTime.UtcNow
             };
-
             await _subscriptionRepository.CreateAsync(subscription);
             await _subscriptionRepository.SaveAsync();
 
-            var createdSubscription = await _subscriptionRepository.GetSubscriptionByIdAsync(subscription.SubscriptionId);
-
-            var subs = new SubscriptionDTO
+            var payment = new Payment
             {
-                SubscriptionId = createdSubscription.SubscriptionId,
-                CustomerId = createdSubscription.Customer?.CustomerId,
-                CustomerName = createdSubscription.Customer?.Name,
-                PlanId = createdSubscription.Plan?.PlanId,
-                PlanName = createdSubscription.Plan?.Name,
-                ProductId = createdSubscription.Product?.ProductId,
-                ProductName = createdSubscription.Product?.Name,
-                ImageUrl = createdSubscription.Product?.ImageUrl,
-                StartDate = createdSubscription.StartDate,
-                EndDate = createdSubscription.EndDate,
-                RemainingDays = createdSubscription.RemainingDays,
-                CreatedAt = createdSubscription.CreatedAt,
-                UpdatedAt = createdSubscription.UpdatedAt,
-                Status = createdSubscription.Status
+                SubscriptionId = subscription.SubscriptionId,
+                Amount = plan.Price,
+                Method = "BankTransfer",
+                Status = "Pending"
+            };
+            await _paymentRepo.CreateAsync(payment);
+            await _paymentRepo.SaveAsync();
+
+            var transferContent = $"SEVQR SUB{subscription.SubscriptionId}";
+
+            // Generate VietQR link từ SePay
+            var qrUrl = $"https://qr.sepay.vn/img?bank=Vietinbank&acc=105874237719&amount={plan.Price}&des={transferContent}";
+
+            var subs = await _subscriptionRepository.GetSubscriptionByIdAsync(subscription.SubscriptionId);
+            var subsDto = new SubscriptionDTO
+            {
+                SubscriptionId = subs.SubscriptionId,
+                CustomerId = subs.CustomerId,
+                CustomerName = subs.Customer?.Name,
+                PlanId = subs.PlanId,
+                PlanName = subs.Plan?.Name,
+                ProductId = subs.ProductId,
+                ProductName = subs.Product?.Name,
+                ImageUrl = subs.Product?.ImageUrl,
+                Status = subs.Status
             };
 
-            return new SubReponse
+            return new SubResponse
             {
-                Message = "Order created successfully, waiting for payment.",
-                Data = subs
+                Message = "Order created successfully, please scan QR to pay.",
+                Data = subsDto,
+                QrUrl = qrUrl,
+                BankAccount = "105874237719",
+                BankName = "Vietinbank",
+                AccountHolder = "NGUYEN MINH KHOI",
+                TransferContent = transferContent,
+                Amount = plan.Price
             };
         }
+
+        public async Task HandleSepayWebhookAsync(SepayWebhookRequest request)
+        {
+            // chỉ xử lý giao dịch tiền vào
+            if (request.TransferType != "in") return;
+
+            var match = Regex.Match(request.Content ?? "", @"SEVQR\s+SUB(\d+)");
+
+            if (!match.Success) return;
+
+            var subId = int.Parse(match.Groups[1].Value);
+            // 🔑 Load luôn Subscription kèm Plan/Product
+            var subscription = await _subscriptionRepository.GetSubscriptionByIdAsync(subId);
+            if (subscription == null) return;
+
+            var payment = await _paymentRepo.GetBySubscriptionIdAsync(subId);
+            if (payment == null) return;
+
+            // 🔑 Nên so sánh <= hoặc Math.Abs để tránh lệch nhỏ
+            if (Math.Abs(payment.Amount - request.TransferAmount) <= 1)
+            {
+                payment.Status = "Success";
+                payment.PaidAt = DateTime.UtcNow;
+                await _paymentRepo.UpdateAsync(payment);
+                await _paymentRepo.SaveAsync();
+
+                subscription.Status = "Active";
+                subscription.StartDate = DateOnly.FromDateTime(DateTime.UtcNow);
+                subscription.EndDate = DateOnly.FromDateTime(
+                    DateTime.UtcNow.AddDays(subscription.Plan.DurationDays)
+                );
+                subscription.RemainingDays = subscription.Plan.DurationDays;
+                subscription.UpdatedAt = DateTime.UtcNow;
+
+                await _subscriptionRepository.UpdateAsync(subscription);
+                await _subscriptionRepository.SaveAsync();
+            }
+        }
+
+
 
         public async Task<bool> Cancel(int subscriptionId)
         {

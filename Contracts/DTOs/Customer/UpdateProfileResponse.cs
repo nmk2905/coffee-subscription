@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Contracts.DTOs
+namespace Contracts.DTOs.Customer
 {
-    public class VerifyResponse
+    public class UpdateProfileResponse
     {
-        public bool Success { get; set; }
         public string Message { get; set; }
+        public UpdateProfileDTO Data { get; set; }
     }
-
 }

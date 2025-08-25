@@ -11,11 +11,11 @@ using System.Security.Claims;
 namespace APIs.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class subscriptionsController : Controller
+    [Route("api/subscriptions")]
+    public class SubscriptionController : Controller
     {
         private readonly ISubscriptionService _subscriptionService;
-        public subscriptionsController(ISubscriptionService subscriptionService)
+        public SubscriptionController(ISubscriptionService subscriptionService)
         {
             _subscriptionService = subscriptionService;
         }
@@ -35,12 +35,11 @@ namespace APIs.Controllers
         }
 
         /// <summary>
-        /// get-subription-by-id - role admin only
+        /// get-subription-by-id 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetSubByIdAsync(int id)
         {
             var plan = await _subscriptionService.GetSubscriptionByIdAsync(id);

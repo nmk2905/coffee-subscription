@@ -1,15 +1,14 @@
-﻿using Contracts.DTOs.Customer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Contracts.DTOs
+namespace Contracts.DTOs.Customer
 {
-    public class UpdateProfileResponse
+    public class ForgotPasswordReponse
     {
+        public bool Success { get; set; }
         public string Message { get; set; }
-        public UpdateProfileDTO Data { get; set; }
     }
 }

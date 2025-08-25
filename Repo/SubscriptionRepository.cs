@@ -28,6 +28,7 @@ namespace Repositories
                 .Include(s => s.Customer)
                 .Include(s => s.Plan)
                 .Include(s => s.Product)
+                .Include(s => s.Redemptions)
                 .FirstOrDefaultAsync(s => s.SubscriptionId == id);
         }
 
@@ -38,6 +39,17 @@ namespace Repositories
                 .Include(s => s.Product)
                 .Include(s => s.Customer)
                 .Where(s => s.CustomerId == customerId)
+                .ToListAsync();
+        }
+
+        //checkout
+        public async Task<List<Subscription>> GetSubscriptionsByPhoneAsync(string phone)
+        {
+            return await _context.Subscriptions
+                .Include(s => s.Plan)
+                .Include(s => s.Product)
+                .Include(s => s.Customer)
+                .Where(s => s.Customer.Phone == phone)
                 .ToListAsync();
         }
 

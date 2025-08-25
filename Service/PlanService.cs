@@ -1,4 +1,4 @@
-﻿using Contracts.DTOs;
+﻿using Contracts.DTOs.Customer;
 using Contracts.DTOs.SubscriptionPlan;
 using Repo.Models;
 using Repositories;

@@ -1,4 +1,6 @@
 ﻿using Contracts.DTOs.Customer;
+using Contracts.DTOs.Payment;
+using Contracts.DTOs.SepayWebhook;
 using Contracts.DTOs.Subscription;
 using System;
 using System.Collections.Generic;
@@ -15,7 +17,8 @@ namespace Services.Interface
         Task<SubscriptionDTO> GetSubscriptionByIdAsync(int id);
         Task<List<SubscriptionDTO>> GetMySubs(ClaimsPrincipal user);
         Task<List<SubscriptionDTO>> GetAllSubscriptionsAsync(int customerId);
-        Task<SubReponse> Order(OrderDTO request);
+        Task<SubResponse> Order(OrderDTO request);
+        Task HandleSepayWebhookAsync(SepayWebhookRequest request);
         Task<bool> Cancel(int subscriptionId);
     }
 }

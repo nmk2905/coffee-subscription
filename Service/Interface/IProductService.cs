@@ -1,5 +1,4 @@
-﻿using Contracts.DTOs;
-using Contracts.DTOs.Product;
+﻿using Contracts.DTOs.Product;
 using Repo.Models;
 using System;
 using System.Collections.Generic;

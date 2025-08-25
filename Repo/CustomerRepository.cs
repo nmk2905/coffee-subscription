@@ -45,5 +45,11 @@ namespace Repositories
         {
             return await _context.Customers.FirstOrDefaultAsync(t => t.VerificationToken == token);
         }
+
+        public async Task<Customer> GetByPhoneAsync(string phone)
+        {
+            return await _context.Customers
+                .FirstOrDefaultAsync(c => c.Phone == phone);
+        }
     }
 }

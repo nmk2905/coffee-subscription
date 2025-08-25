@@ -1,6 +1,10 @@
+
 using Contracts.Settings;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -9,12 +13,25 @@ using Service;
 using Service.Interface;
 using Services;
 using Services.Interface;
+
 using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var credsFile = builder.Configuration["Firebase:CredentialsFile"];
+var projectId = builder.Configuration["Firebase:ProjectId"];
+if (FirebaseApp.DefaultInstance == null)
+{
+    FirebaseApp.Create(new AppOptions
+    {
+        Credential = string.IsNullOrWhiteSpace(credsFile)
+            ? GoogleCredential.GetApplicationDefault()
+            : GoogleCredential.FromFile(credsFile),
+        ProjectId = projectId
+    });
+}
 
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));

@@ -6,11 +6,11 @@ using Services.Interface;
 namespace APIs.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class categoriesController : Controller
+    [Route("api/categories")]
+    public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
-        public categoriesController(ICategoryService categoryService)
+        public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
         }

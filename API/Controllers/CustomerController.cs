@@ -1,5 +1,6 @@
 ﻿using Contracts.Abstracts.Account;
 using Contracts.DTOs.Customer;
+using FirebaseAdmin.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
@@ -15,14 +16,14 @@ using ResetPasswordRequest = Contracts.Abstracts.Account.ResetPasswordRequest;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class customersController : Controller
+    [Route("api/customers")]
+    public class CustomerController : Controller
     {
         private readonly IConfiguration _config;
         private readonly IPasswordHash _passwordHash;
         private readonly ICustomerService _customerService;
 
-        public customersController(IConfiguration config, ICustomerService customerService, IPasswordHash passwordHash)
+        public CustomerController(IConfiguration config, ICustomerService customerService, IPasswordHash passwordHash)
         {
             _config = config;
             _customerService = customerService;
@@ -111,6 +112,40 @@ namespace API.Controllers
         }
 
         //POST
+
+        public class GoogleLoginRequest
+        {
+            public string IdToken { get; set; }
+        }
+
+        [HttpPost("login-google")]
+        [AllowAnonymous]
+        public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleLoginRequest request)
+        {
+            if (request == null || string.IsNullOrWhiteSpace(request.IdToken))
+                return BadRequest("Missing idToken");
+
+            FirebaseToken decoded;
+            try
+            {
+                decoded = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(request.IdToken);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Invalid Google token: {ex.Message}");
+            }
+
+            var email = decoded.Claims.TryGetValue("email", out var e) ? e?.ToString() : null;
+            var name = decoded.Claims.TryGetValue("name", out var n) ? n?.ToString() : null;
+
+            if (string.IsNullOrEmpty(email))
+                return BadRequest("Email not found in Google token");
+
+            var customer = await _customerService.GetOrCreateGoogleCustomerAsync(email, name);
+
+            var token = GenerateJSONWebToken(customer);
+            return Ok(token);
+        }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterCustomerDTO request)

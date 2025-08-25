@@ -12,7 +12,7 @@ using System.Text;
 namespace APIs.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/staffs")]
     public class StaffController : Controller
     {
         private readonly IConfiguration _config;
